@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerManager {
 
@@ -51,5 +53,79 @@ public class CustomerManager {
         }
 
         return null; // Return null if no customer was found
+    }
+
+      public List<Customer> getCustomersSortedByAge(String sortMethod) {
+        List<Customer> customers = new ArrayList<>();
+        String query = "SELECT * FROM customers";
+
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                int id = rs.getInt("customerID");
+                String name = rs.getString("name");
+                String mobile = rs.getString("mobile");
+                String email = rs.getString("email");
+                String city = rs.getString("city");
+                int age = rs.getInt("age");
+
+                customers.add(new Customer(id, name, mobile, email, city, age));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Sorting customers based on the chosen method
+        if (sortMethod.equals("bubble")) {
+            bubbleSort(customers);
+        } else if (sortMethod.equals("quick")) {
+            quickSort(customers, 0, customers.size() - 1);
+        }
+
+        return customers;
+    }
+
+    // Bubble Sort
+    private void bubbleSort(List<Customer> customers) {
+        for (int i = 0; i < customers.size() - 1; i++) {
+            for (int j = 0; j < customers.size() - 1 - i; j++) {
+                if (customers.get(j).getAge() > customers.get(j + 1).getAge()) {
+                    // Swap elements
+                    Customer temp = customers.get(j);
+                    customers.set(j, customers.get(j + 1));
+                    customers.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
+    // Quick Sort
+    private void quickSort(List<Customer> customers, int low, int high) {
+        if (low < high) {
+            int pivotIndex = partition(customers, low, high);
+            quickSort(customers, low, pivotIndex - 1);
+            quickSort(customers, pivotIndex + 1, high);
+        }
+    }
+
+    private int partition(List<Customer> customers, int low, int high) {
+        int pivot = customers.get(high).getAge();
+        int i = (low - 1);
+
+        for (int j = low; j < high; j++) {
+            if (customers.get(j).getAge() <= pivot) {
+                i++;
+                // Swap elements
+                Customer temp = customers.get(i);
+                customers.set(i, customers.get(j));
+                customers.set(j, temp);
+            }
+        }
+
+        // Swap the pivot element
+        Customer temp = customers.get(i + 1);
+        customers.set(i + 1, customers.get(high));
+        customers.set(high, temp);
+
+        return i + 1;
     }
 }
