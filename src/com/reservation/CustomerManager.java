@@ -4,86 +4,65 @@ import java.util.List;
 
 public class CustomerManager {
 
-    private Connection connection; // Database connection
+    private List<Customer> customers; // Local list to store customers
+    private int customerIdCounter;    // Counter to track the next available customer ID
 
-    public CustomerManager(Connection connection) {
-        this.connection = connection; // Initialize the connection
+    public CustomerManager() {
+        this.customers = new ArrayList<>(); // Initialize the local list
+        this.customerIdCounter = 1;         // Start the counter at 1
     }
 
-    // Method to add a customer to the database
-    public void addCustomerToDatabase(Customer customer) {
-        String query = "INSERT INTO customers (name, mobile, email, city, age) VALUES (?, ?, ?, ?, ?)";
+    // Method to add a customer to the local list with an incrementing ID
+    public void addCustomer(Customer customer) {
+        customer.setCustomerID(customerIdCounter); // Set the ID for the new customer
+        customers.add(customer);
+        customerIdCounter++; // Increment the counter for the next customer
+        System.out.println("Customer added successfully!\n");
+    }
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, customer.getName());
-            stmt.setString(2, customer.getMobile());
-            stmt.setString(3, customer.getEmail());
-            stmt.setString(4, customer.getCity());
-            stmt.setInt(5, customer.getAge());
-
-            stmt.executeUpdate();
-            System.out.println("Customer added successfully!");
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // Method to retrieve a list of all customers with their IDs
+    public List<String> getAllCustomersWithIds() {
+        List<String> customerDetails = new ArrayList<>();
+        for (Customer customer : customers) {
+            customerDetails.add("ID: " + customer.getCustomerID() + ", Name: " + customer.getName());
         }
+        return customerDetails;
     }
 
-    // Method to retrieve a customer by ID from the database
+    // Method to retrieve a customer by ID
     public Customer getCustomerById(int id) {
-        String query = "SELECT * FROM customers WHERE customerID = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id); // Set the customerID parameter
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    // Retrieve customer details from the result set
-                    int customerID = rs.getInt("customerID");
-                    String name = rs.getString("name");
-                    String mobile = rs.getString("mobile");
-                    String email = rs.getString("email");
-                    String city = rs.getString("city");
-                    int age = rs.getInt("age");
-
-                    return new Customer(customerID,name, mobile, email, city, age);
-                }
+        for (Customer customer : customers) {
+            if (customer.getCustomerID() == id) {
+                return customer;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
+        System.out.println("No customer found with ID: " + id + "\n");
         return null; // Return null if no customer was found
     }
 
-      public List<Customer> getCustomersSortedByAge(String sortMethod) {
-        List<Customer> customers = new ArrayList<>();
-        String query = "SELECT * FROM customers";
-
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-            while (rs.next()) {
-                int id = rs.getInt("customerID");
-                String name = rs.getString("name");
-                String mobile = rs.getString("mobile");
-                String email = rs.getString("email");
-                String city = rs.getString("city");
-                int age = rs.getInt("age");
-
-                customers.add(new Customer(id, name, mobile, email, city, age));
+    // Method to display all customers
+    public void displayAllCustomers() {
+        if (customers.isEmpty()) {
+            System.out.println("No customers available.\n");
+        } else {
+            for (Customer customer : customers) {
+                System.out.println(customer);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        // Sorting customers based on the chosen method
-        if (sortMethod.equals("bubble")) {
-            bubbleSort(customers);
-        } else if (sortMethod.equals("quick")) {
-            quickSort(customers, 0, customers.size() - 1);
-        }
-
-        return customers;
     }
 
+    public List<Customer> getCustomersSortedByAge(String sortMethod) {
+        // Sorting customers based on the chosen method
+        if (sortMethod.equals("bubble")) {
+            bubbleSort(customers); // Call Bubble Sort if chosen
+        } else if (sortMethod.equals("quick")) {
+            quickSort(customers, 0, customers.size() - 1); // Call Quick Sort if chosen
+        } else {
+            System.out.println("Invalid sort method. Returning unsorted list.\n");
+        }
+
+        return customers; // Return the sorted list of customers
+    }
     // Bubble Sort
     private void bubbleSort(List<Customer> customers) {
         for (int i = 0; i < customers.size() - 1; i++) {

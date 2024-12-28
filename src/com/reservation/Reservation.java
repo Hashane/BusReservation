@@ -1,60 +1,61 @@
 public class Reservation {
-    private static int reservationCounter = 1;
-    private int reservationID;
-    private int customerID;
-    private String busNumber;
-    private String status;
-    private String timestamp;
+    private int reservationId;   // Unique reservation ID
+    private Customer customer;   // Customer for the reservation
+    private Bus bus;             // Bus for the reservation
+    private String status;       // Status of the reservation (e.g., Reserved, Cancelled)
+    private long timestamp;      // Timestamp of when the reservation was made
 
-    public Reservation(int customerID, String busNumber) {
-        this.reservationID = reservationCounter++;
-        this.customerID = customerID;
-        this.busNumber = busNumber;
-        this.status = "Reserved";
-        this.timestamp = java.time.LocalDateTime.now().toString(); // Timestamp of reservation
+    public Reservation(Customer customer, Bus bus, String status, long timestamp, int reservationId) {
+        this.customer = customer;
+        this.bus = bus;
+        this.status = status;
+        this.timestamp = timestamp;
+        this.reservationId = reservationId; // Set the reservation ID
     }
 
-    public int getReservationID() {
-        return reservationID;
+    // Getter and setter methods
+    public int getReservationId() {
+        return reservationId;
     }
 
-    public int getCustomerID() {
-        return customerID;
+    public void setReservationId(int reservationId) {
+        this.reservationId = reservationId;
     }
 
-    public String getBusNumber() {
-        return busNumber;
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Bus getBus() {
+        return bus;
+    }
+
+    public void setBus(Bus bus) {
+        this.bus = bus;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public String getTimestamp() {
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public long getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "reservationID=" + reservationID +
-                ", customerID=" + customerID +
-                ", busNumber='" + busNumber + '\'' +
-                ", status='" + status + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                '}';
-    }
-
-    public void createReservation() {
-        System.out.println("Reservation Created: " + reservationID + ", Bus " + busNumber + ", Customer " + customerID);
-    }
-
-    public void cancelSeat() {
-        this.status = "Cancelled";
-        System.out.println("Reservation " + reservationID + " has been cancelled.");
-    }
-
-    public void display() {
-        System.out.println("Reservation Details: ID " + reservationID + ", Bus " + busNumber + ", Status " + status);
+        return "Reservation ID: " + reservationId + ", Customer: " + customer.getName() + ", Bus: " + bus.getBusNumber() + ", Status: " + status;
     }
 }

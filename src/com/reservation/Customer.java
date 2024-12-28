@@ -23,10 +23,13 @@ public class Customer {
         this.age = age;
     }
 
+    public void setCustomerID(int id) {
+        this.customerID = id;
+    }
+
     public int getCustomerID() {
         return customerID;
     }
-
     public String getName() {
         return name;
     }
