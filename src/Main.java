@@ -1,4 +1,7 @@
-import java.util.ArrayList;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,7 +19,7 @@ public class Main {
             // Display menu to the user
             System.out.println("\nWelcome to the Bus Reservation System");
             System.out.println("1. Add Customer");
-            System.out.println("2. Add Bus");
+            System.out.println("2. Bus Management");
             System.out.println("3. Reservations");
             System.out.println("4. Display Customers Sorted by Age (Bubble Sort)");
             System.out.println("5. Display Customers Sorted by Age (Quick Sort)");
@@ -26,7 +29,7 @@ public class Main {
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
             System.out.print("\n");
 
             switch (choice) {
@@ -50,31 +53,87 @@ public class Main {
                     break;
 
                 case 2:
-                    // Add a bus
-                    System.out.println("Enter Bus Details:");
-                    System.out.print("Total Seats: ");
-                    int totalSeats = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Start Location: ");
-                    String startLocation = scanner.nextLine();
-                    System.out.print("End Location: ");
-                    String endLocation = scanner.nextLine();
-                    System.out.print("Time: ");
-                    String time = scanner.nextLine();
-                    System.out.print("Fare: ");
-                    double fare = scanner.nextDouble();
-                    scanner.nextLine();
+                    System.out.println("\n--- Bus Options ---");
+                    System.out.println("1. Add Bus");
+                    System.out.println("2. Search Bus by Number");
+                    System.out.println("3. Display All Buses");
+                    System.out.println("4. Search Bus");
+                    System.out.println("5. Exit");
+                    System.out.print("Choose an option for reservation: ");
+                    int busChoice = scanner.nextInt();
+                    scanner.nextLine(); // consume newline
 
-                    Bus bus = new Bus(totalSeats, startLocation, endLocation, time, fare);
-                    busManager.addBus(bus);
+                    switch (busChoice) {
+                        case 1:
+                            // Add a bus
+                            System.out.println("Enter Bus Details:");
+                            System.out.print("Total Seats: ");
+                            int totalSeats = scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("Start Location: ");
+                            String startLocation = scanner.nextLine();
+                            System.out.print("End Location: ");
+                            String endLocation = scanner.nextLine();
+                            System.out.print("Time: ");
+                            String time = scanner.nextLine();
+                            System.out.print("Fare: ");
+                            double fare = scanner.nextDouble();
+                            scanner.nextLine();
+
+                            try {
+                                // Parse the input string into a LocalTime object
+                                LocalTime localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+
+                                // Convert LocalTime to java.sql.Time
+                                Time sqlTime = Time.valueOf(localTime);
+
+                                Bus bus = new Bus(totalSeats, startLocation, endLocation, sqlTime, fare);
+                                busManager.addBus(bus);
+                                break;
+                                // Use the sqlTime object in your program (e.g., save to the database)
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid time format. Please use HH:mm (e.g., 14:30).");
+                            }
+                        case 2:
+                            busManager.displayAllBuses();
+                            break;
+
+                        case 3:
+                            busManager.displayAllBuses();
+                            break;
+
+                        case 4:
+                            System.out.print("Enter Start Location: ");
+                            startLocation = scanner.nextLine();
+                            System.out.print("Enter End Location: ");
+                            endLocation = scanner.nextLine();
+                            System.out.print("Enter Time Range (e.g., 01:00-02:00): ");
+                            String timeRange = scanner.nextLine();
+
+                            List<Bus> busesByCriteria = busManager.searchByAllCriteria(startLocation, endLocation,
+                                    timeRange);
+                            if (busesByCriteria.isEmpty()) {
+                                System.out.println("No buses found for the given criteria.");
+                            } else {
+                                busesByCriteria.forEach(System.out::println);
+                            }
+                            break;
+                        case 5:
+                            break;
+
+                        default:
+                            System.out.println("Invalid option. Try again.");
+                    }
                     break;
 
                 case 3:
                     System.out.println("\n1. Reserve Seat");
                     System.out.println("2. Cancel Last Reservation");
-                    System.out.println("3. Display Reservations");
-                    System.out.println("4. Display Reservations in Queue");
-                    System.out.println("5. Exit");
+                    System.out.println("3. Cancel a Reservation");
+                    System.out.println("4. Display Reservations");
+                    System.out.println("5. Display Reservations in Queue");
+                    System.out.println("6. Request a New Seat");
+                    System.out.println("7. Exit");
                     System.out.print("\n");
                     System.out.print("Choose an option for reservation: ");
                     int subChoice = scanner.nextInt();
@@ -102,14 +161,28 @@ public class Main {
                             break;
 
                         case 3:
-                            reservationManager.displayReservationsInStack();
+                            System.out.print("Enter Reservation ID: ");
+                            int reservationId = scanner.nextInt();
+                            reservationManager.cancelReservationById(reservationId);
                             break;
 
                         case 4:
-                            reservationManager.displayReservationsInQueue();
+                            reservationManager.displayReservationsInStack();
                             break;
 
                         case 5:
+                            reservationManager.displayReservationsInQueue();
+                            break;
+
+                        case 6:
+                            System.out.print("Enter Reservation ID: ");
+                            int currentReservationId = scanner.nextInt();
+                            System.out.print("Enter Seat Number: ");
+                            int seatNumber = scanner.nextInt();
+                            reservationManager.requestNewSeat(currentReservationId, seatNumber);
+                            break;
+
+                        case 7:
                             break;
 
                         default:

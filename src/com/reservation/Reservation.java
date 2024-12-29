@@ -2,8 +2,9 @@ public class Reservation {
     private int reservationId;   // Unique reservation ID
     private Customer customer;   // Customer for the reservation
     private Bus bus;             // Bus for the reservation
-    private String status;       // Status of the reservation (e.g., Reserved, Cancelled)
+    private String status;       // Status of the reservation (e.g., Reserved, Cancelled, Waiting)
     private long timestamp;      // Timestamp of when the reservation was made
+    private int requestedSeat;
 
     public Reservation(Customer customer, Bus bus, String status, long timestamp, int reservationId) {
         this.customer = customer;
@@ -11,6 +12,14 @@ public class Reservation {
         this.status = status;
         this.timestamp = timestamp;
         this.reservationId = reservationId; // Set the reservation ID
+    }
+
+    public int getRequestedSeat() {
+        return requestedSeat;
+    }
+
+    public void setRequestedSeat(int requestedSeat) {
+        this.requestedSeat = requestedSeat;
     }
 
     // Getter and setter methods

@@ -1,14 +1,16 @@
+import java.sql.Time;
+
 public class Bus {
     private int busNumber;
     private int totalSeats;
     private int reservedSeats;  // Track the number of reserved seats
     private String start;
     private String end;
-    private String time;
+    private Time time;
     private double fare;
 
     // Constructor for a bus without a bus number (if needed)
-    public Bus(int totalSeats, String start, String end, String time, double fare) {
+    public Bus(int totalSeats, String start, String end, Time time, double fare) {
         this.totalSeats = totalSeats;
         this.start = start;
         this.end = end;
@@ -18,7 +20,7 @@ public class Bus {
     }
 
     // Constructor with bus number
-    public Bus(int busNumber, int totalSeats, String start, String end, String time, double fare) {
+    public Bus(int busNumber, int totalSeats, String start, String end, Time time, double fare) {
         this.busNumber = busNumber;
         this.totalSeats = totalSeats;
         this.start = start;
@@ -49,7 +51,7 @@ public class Bus {
         return end;
     }
 
-    public String getTime() {
+    public Time getTime() {
         return time;
     }
 
@@ -98,7 +100,7 @@ public class Bus {
     }
 
     // Method to update bus details
-    public void updateDetails(int totalSeats, String start, String end, String time, double fare) {
+    public void updateDetails(int totalSeats, String start, String end, Time time, double fare) {
         this.totalSeats = totalSeats;
         this.start = start;
         this.end = end;
